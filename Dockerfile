@@ -1,12 +1,14 @@
 FROM node:20-alpine
 
+RUN npm install -g pnpm
+
 WORKDIR /app
 
 RUN apk add --upgrade --no-cache python3 make g++
 
-COPY package.json ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-RUN npm install --legacy-peer-deps && npm rebuild
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
