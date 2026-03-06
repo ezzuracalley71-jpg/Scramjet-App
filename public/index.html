@@ -4,79 +4,343 @@
   <meta charset="UTF-8" />
   <meta name="referrer" content="no-referrer" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins&display=swap">
+  <title>NEXUS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --cyan: #00f5ff;
+      --magenta: #ff00aa;
+      --dark: #020408;
+      --mid: #080e18;
+      --glass: rgba(0, 245, 255, 0.04);
+      --border: rgba(0, 245, 255, 0.15);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: "Inter", sans-serif;
-      background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-    #particles-js {
-      position: absolute;
+
+    html, body {
       width: 100%; height: 100%;
-      top: 0; left: 0; z-index: 0;
+      overflow: hidden;
+      background: var(--dark);
+      font-family: 'Space Mono', monospace;
+      color: #fff;
     }
-    .main {
-      position: relative; z-index: 10;
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: center;
+
+    /* Animated grid background */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridDrift 20s linear infinite;
+      z-index: 0;
+    }
+
+    @keyframes gridDrift {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(60px); }
+    }
+
+    /* Glowing orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      z-index: 0;
+      animation: orbFloat 8s ease-in-out infinite alternate;
+    }
+    .orb-1 {
+      width: 400px; height: 400px;
+      background: var(--cyan);
+      top: -100px; left: -100px;
+      animation-delay: 0s;
+    }
+    .orb-2 {
+      width: 350px; height: 350px;
+      background: var(--magenta);
+      bottom: -80px; right: -80px;
+      animation-delay: -4s;
+    }
+    .orb-3 {
+      width: 200px; height: 200px;
+      background: var(--cyan);
+      top: 50%; right: 15%;
+      opacity: 0.08;
+      animation-delay: -2s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(20px, 30px) scale(1.1); }
+    }
+
+    /* Scanline overlay */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Main container */
+    .container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       width: 100%;
+      height: 100vh;
+      padding: 20px;
     }
-    .title {
-      font-size: 10vh; color: #fff;
-      text-align: center; text-transform: uppercase;
-      margin-bottom: 0.3em; letter-spacing: 0.05em;
-      text-shadow: 0 0 40px rgba(100,100,255,0.4), 2px 4px 6px rgba(0,0,0,0.5);
-      transition: 0.35s ease; cursor: default;
+
+    /* Logo/title area */
+    .logo-area {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeUp 0.8s ease both;
     }
-    .title:hover { transform: translateY(-5%) scale(1.03); font-weight: 800; }
-    #splash {
-      color: #555; margin-bottom: 1.5em;
-      font-family: "Poppins", sans-serif;
-      font-size: 0.95rem; letter-spacing: 0.1em;
+
+    .logo-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      opacity: 0.7;
     }
-    input {
-      padding: 18px 24px; width: 520px; max-width: 90vw;
-      border-radius: 8px; background: rgba(40,40,60,0.85);
-      backdrop-filter: blur(12px); text-align: center;
-      font-size: 18px; font-family: "Poppins", sans-serif;
-      border: 1px solid rgba(100,100,255,0.2);
-      outline: none; color: #fff; transition: 0.4s;
-      box-shadow: 0 0 20px rgba(80,80,200,0.15);
+
+    .logo-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(52px, 12vw, 96px);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      line-height: 1;
+      background: linear-gradient(135deg, #ffffff 0%, var(--cyan) 50%, var(--magenta) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      animation: titleGlow 3s ease-in-out infinite alternate;
     }
-    input:focus {
-      border-color: rgba(100,100,255,0.6);
-      box-shadow: 0 0 30px rgba(80,80,200,0.35);
+
+    @keyframes titleGlow {
+      0% { filter: drop-shadow(0 0 20px rgba(0,245,255,0.3)); }
+      100% { filter: drop-shadow(0 0 40px rgba(255,0,170,0.4)); }
     }
-    ::placeholder { color: #aaa; }
-    @media (orientation: portrait) {
-      .title { font-size: 10vw; }
-      input { width: 85vw; font-size: 16px; }
+
+    /* Glitch effect on hover */
+    .logo-title:hover {
+      animation: glitch 0.3s steps(2) infinite;
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 1px); filter: drop-shadow(2px 0 var(--magenta)); }
+      40% { transform: translate(2px, -1px); filter: drop-shadow(-2px 0 var(--cyan)); }
+      60% { transform: translate(-1px, 2px); }
+      80% { transform: translate(1px, -1px); }
+      100% { transform: translate(0); }
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      margin-top: 10px;
+    }
+
+    /* Search area */
+    .search-area {
+      width: 100%;
+      max-width: 580px;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .search-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Animated border */
+    .search-wrapper::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--cyan));
+      background-size: 200% 100%;
+      animation: borderSlide 3s linear infinite;
+      z-index: -1;
+    }
+
+    @keyframes borderSlide {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 200% 0%; }
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 18px 56px 18px 20px;
+      background: var(--mid);
+      border: none;
+      border-radius: 3px;
+      color: #fff;
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      outline: none;
+      transition: background 0.3s;
+    }
+
+    .search-input:focus {
+      background: rgba(8, 14, 24, 0.95);
+    }
+
+    .search-input::placeholder {
+      color: rgba(255,255,255,0.2);
+      font-style: italic;
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--cyan);
+      font-size: 18px;
+      padding: 4px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-btn:hover {
+      color: var(--magenta);
+      transform: scale(1.2);
+    }
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 20px;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.2);
+      text-transform: uppercase;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    .status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--cyan); }
+      50% { opacity: 0.3; box-shadow: none; }
+    }
+
+    /* Corner decorations */
+    .corner {
+      position: fixed;
+      width: 40px; height: 40px;
+      z-index: 5;
+      opacity: 0.4;
+    }
+    .corner::before, .corner::after {
+      content: '';
+      position: absolute;
+      background: var(--cyan);
+    }
+    .corner::before { width: 100%; height: 1px; top: 0; }
+    .corner::after { width: 1px; height: 100%; left: 0; top: 0; }
+    .corner.tl { top: 20px; left: 20px; }
+    .corner.tr { top: 20px; right: 20px; transform: scaleX(-1); }
+    .corner.bl { bottom: 20px; left: 20px; transform: scaleY(-1); }
+    .corner.br { bottom: 20px; right: 20px; transform: scale(-1); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .logo-title { font-size: 48px; }
+      .search-input { font-size: 13px; padding: 16px 48px 16px 16px; }
     }
   </style>
 </head>
 <body>
-  <div id="particles-js"></div>
-  <div class="main">
-    <h1 class="title">NEXUS</h1>
-    <p id="splash">Browse freely</p>
-    <div class="search-container">
+  <div class="grid-bg"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="scanlines"></div>
+
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <div class="container">
+    <div class="logo-area">
+      <div class="logo-tag">// secure tunnel v2.0</div>
+      <h1 class="logo-title">NEXUS</h1>
+      <div class="logo-sub">unrestricted access protocol</div>
+    </div>
+
+    <div class="search-area">
       <form id="fv">
-        <input id="input" placeholder="Search or enter a URL" type="text" autocomplete="off" />
+        <div class="search-wrapper">
+          <input
+            id="input"
+            class="search-input"
+            placeholder="enter url or search query_"
+            type="text"
+            autocomplete="off"
+          />
+          <button type="submit" class="search-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </div>
       </form>
+
+      <div class="status-bar">
+        <div class="status-dot"></div>
+        <span>connection active</span>
+        <span>//</span>
+        <span>proxy ready</span>
+      </div>
     </div>
   </div>
 
-  <!-- Must load scramjet.all.js FIRST before calling $scramjetLoadController -->
   <script src="/scram/scramjet.all.js"></script>
   <script src="/baremux/bare.cjs"></script>
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <script>
     const { ScramjetController } = $scramjetLoadController();
@@ -87,11 +351,7 @@
         all: "/scram/scramjet.all.js",
         sync: "/scram/scramjet.sync.js",
       },
-      flags: {
-        rewriterLogs: false,
-        naiiveRewriter: false,
-        scramitize: false,
-      }
+      flags: { rewriterLogs: false, naiiveRewriter: false, scramitize: false }
     });
     scramjet.init("/sw.js");
 
@@ -100,21 +360,6 @@
       wisp: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`
     }]);
 
-    particlesJS("particles-js", {
-      particles: {
-        number: { value: 60, density: { enable: true, value_area: 800 } },
-        color: { value: "#6464ff" }, shape: { type: "circle" },
-        opacity: { value: 0.3, random: true }, size: { value: 2, random: true },
-        line_linked: { enable: true, distance: 150, color: "#6464ff", opacity: 0.15, width: 1 },
-        move: { enable: true, speed: 1.5, random: true, out_mode: "out" }
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" } },
-        modes: { repulse: { distance: 80 }, push: { particles_nb: 3 } }
-      }
-    });
-
     function isUrl(val) {
       return /^http(s?):\/\//.test(val) || (val.includes(".") && !val.trim().startsWith(" "));
     }
@@ -122,6 +367,7 @@
     document.getElementById("fv").addEventListener("submit", (e) => {
       e.preventDefault();
       let url = document.getElementById("input").value.trim();
+      if (!url) return;
       const engine = "https://duckduckgo.com/?q=";
       if (!isUrl(url)) {
         url = engine + encodeURIComponent(url);
