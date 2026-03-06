@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
@@ -6,7 +6,7 @@ RUN apk add --upgrade --no-cache python3 make g++
 
 COPY package.json ./
 
-RUN npm install --legacy-peer-deps
+RUN npm install --legacy-peer-deps && npm rebuild
 
 COPY . .
 
