@@ -29,38 +29,25 @@
       width: 100%;
     }
     .title {
-      font-size: 10vh;
-      color: #fff;
-      text-align: center;
-      text-transform: uppercase;
-      margin-bottom: 0.3em;
-      letter-spacing: 0.05em;
+      font-size: 10vh; color: #fff;
+      text-align: center; text-transform: uppercase;
+      margin-bottom: 0.3em; letter-spacing: 0.05em;
       text-shadow: 0 0 40px rgba(100,100,255,0.4), 2px 4px 6px rgba(0,0,0,0.5);
-      transition: 0.35s ease;
-      cursor: default;
+      transition: 0.35s ease; cursor: default;
     }
     .title:hover { transform: translateY(-5%) scale(1.03); font-weight: 800; }
     #splash {
-      color: #555;
-      margin-bottom: 1.5em;
+      color: #555; margin-bottom: 1.5em;
       font-family: "Poppins", sans-serif;
-      font-size: 0.95rem;
-      letter-spacing: 0.1em;
+      font-size: 0.95rem; letter-spacing: 0.1em;
     }
     input {
-      padding: 18px 24px;
-      width: 520px;
-      max-width: 90vw;
-      border-radius: 8px;
-      background: rgba(40,40,60,0.85);
-      backdrop-filter: blur(12px);
-      text-align: center;
-      font-size: 18px;
-      font-family: "Poppins", sans-serif;
+      padding: 18px 24px; width: 520px; max-width: 90vw;
+      border-radius: 8px; background: rgba(40,40,60,0.85);
+      backdrop-filter: blur(12px); text-align: center;
+      font-size: 18px; font-family: "Poppins", sans-serif;
       border: 1px solid rgba(100,100,255,0.2);
-      outline: none;
-      color: #fff;
-      transition: 0.4s;
+      outline: none; color: #fff; transition: 0.4s;
       box-shadow: 0 0 20px rgba(80,80,200,0.15);
     }
     input:focus {
@@ -86,21 +73,26 @@
     </div>
   </div>
 
-  <script src="/scram/scramjet.controller.js"></script>
+  <!-- Must load scramjet.all.js FIRST before calling $scramjetLoadController -->
+  <script src="/scram/scramjet.all.js"></script>
   <script src="/baremux/bare.cjs"></script>
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <script>
     const { ScramjetController } = $scramjetLoadController();
-
     const scramjet = new ScramjetController({
+      prefix: "/scram/",
       files: {
         wasm: "/scram/scramjet.wasm.wasm",
         all: "/scram/scramjet.all.js",
         sync: "/scram/scramjet.sync.js",
+      },
+      flags: {
+        rewriterLogs: false,
+        naiiveRewriter: false,
+        scramitize: false,
       }
     });
-
     scramjet.init("/sw.js");
 
     const conn = new BareMux.BareMuxConnection("/baremux/worker.js");
@@ -111,10 +103,8 @@
     particlesJS("particles-js", {
       particles: {
         number: { value: 60, density: { enable: true, value_area: 800 } },
-        color: { value: "#6464ff" },
-        shape: { type: "circle" },
-        opacity: { value: 0.3, random: true },
-        size: { value: 2, random: true },
+        color: { value: "#6464ff" }, shape: { type: "circle" },
+        opacity: { value: 0.3, random: true }, size: { value: 2, random: true },
         line_linked: { enable: true, distance: 150, color: "#6464ff", opacity: 0.15, width: 1 },
         move: { enable: true, speed: 1.5, random: true, out_mode: "out" }
       },
@@ -143,3 +133,4 @@
   </script>
 </body>
 </html>
+
