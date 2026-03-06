@@ -91,29 +91,22 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <script>
-    // Wait for everything to load then init
-    window.addEventListener("load", async () => {
-      try {
-        const sj = new ScramjetController({
-          prefix: "/scram/",
-          files: {
-            wasm: "/scram/scramjet.wasm.wasm",
-            all: "/scram/scramjet.all.js",
-            sync: "/scram/scramjet.sync.js",
-          }
-        });
-        await sj.init("/sw.js");
+    const { ScramjetController } = $scramjetLoadController();
 
-        const conn = new BareMux.BareMuxConnection("/baremux/worker.js");
-        await conn.setTransport("/epoxy/index.mjs", [{
-          wisp: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`
-        }]);
-
-        window.__sj = sj;
-      } catch(e) {
-        // silently fail, form will still try to navigate
+    const scramjet = new ScramjetController({
+      files: {
+        wasm: "/scram/scramjet.wasm.wasm",
+        all: "/scram/scramjet.all.js",
+        sync: "/scram/scramjet.sync.js",
       }
     });
+
+    scramjet.init("/sw.js");
+
+    const conn = new BareMux.BareMuxConnection("/baremux/worker.js");
+    conn.setTransport("/epoxy/index.mjs", [{
+      wisp: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`
+    }]);
 
     particlesJS("particles-js", {
       particles: {
@@ -145,11 +138,7 @@
       } else if (!url.startsWith("http://") && !url.startsWith("https://")) {
         url = "https://" + url;
       }
-      if (window.__sj) {
-        location.href = window.__sj.encodeUrl(url);
-      } else {
-        alert("Proxy not ready yet, please wait a moment and try again.");
-      }
+      location.href = scramjet.encodeUrl(url);
     });
   </script>
 </body>
