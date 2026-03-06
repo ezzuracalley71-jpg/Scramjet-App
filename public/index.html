@@ -91,23 +91,30 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <script>
-    const { ScramjetController } = $scramjetLoadController();
-    const scramjet = new ScramjetController({
-      files: {
-        wasm: "/scram/scramjet.wasm.wasm",
-        all: "/scram/scramjet.all.js",
-        sync: "/scram/scramjet.sync.js",
+    // Wait for everything to load then init
+    window.addEventListener("load", async () => {
+      try {
+        const sj = new ScramjetController({
+          prefix: "/scram/",
+          files: {
+            wasm: "/scram/scramjet.wasm.wasm",
+            all: "/scram/scramjet.all.js",
+            sync: "/scram/scramjet.sync.js",
+          }
+        });
+        await sj.init("/sw.js");
+
+        const conn = new BareMux.BareMuxConnection("/baremux/worker.js");
+        await conn.setTransport("/epoxy/index.mjs", [{
+          wisp: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`
+        }]);
+
+        window.__sj = sj;
+      } catch(e) {
+        // silently fail, form will still try to navigate
       }
     });
 
-    scramjet.init();
-    navigator.serviceWorker.register("/sw.js");
-
-    // Init BareMux with wisp transport
-    const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
-    connection.setTransport("/epoxy/index.mjs", [{ wisp: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/` }]);
-
-    // Particles
     particlesJS("particles-js", {
       particles: {
         number: { value: 60, density: { enable: true, value_area: 800 } },
@@ -132,13 +139,17 @@
     document.getElementById("fv").addEventListener("submit", (e) => {
       e.preventDefault();
       let url = document.getElementById("input").value.trim();
-      const engine = localStorage.getItem("engine") || "https://duckduckgo.com/?q=";
+      const engine = "https://duckduckgo.com/?q=";
       if (!isUrl(url)) {
         url = engine + encodeURIComponent(url);
       } else if (!url.startsWith("http://") && !url.startsWith("https://")) {
         url = "https://" + url;
       }
-      location.href = scramjet.encodeUrl(url);
+      if (window.__sj) {
+        location.href = window.__sj.encodeUrl(url);
+      } else {
+        alert("Proxy not ready yet, please wait a moment and try again.");
+      }
     });
   </script>
 </body>
