@@ -5,7 +5,6 @@
   <meta name="referrer" content="no-referrer" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins&display=swap">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -87,20 +86,22 @@
     </div>
   </div>
 
-  <!-- Load Scramjet codec so we can use its built-in encoder -->
-  <script src="/scram/scramjet.codecs.js"></script>
-
+  <script src="/scram/scramjet.controller.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mercuryworkshop/bare-mux@2/dist/bare.cjs"></script>
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <script>
-    // Register Scramjet SW
-    window.addEventListener("load", async () => {
-      if ("serviceWorker" in navigator) {
-        try {
-          await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-        } catch(e) { console.error("SW failed:", e); }
+    // Init Scramjet
+    const { ScramjetController } = $scramjetLoadController();
+    const scramjet = new ScramjetController({
+      prefix: "/scram/",
+      files: {
+        wasm: "/scram/scramjet.wasm.wasm",
+        all: "/scram/scramjet.all.js",
+        sync: "/scram/scramjet.sync.js",
       }
     });
+    scramjet.init("/sw.js");
 
     // Particles
     particlesJS("particles-js", {
@@ -132,11 +133,8 @@
       } else if (!url.startsWith("http://") && !url.startsWith("https://")) {
         url = "https://" + url;
       }
-      // Use Scramjet's built-in codec if available, fallback to plain encodeURIComponent
-      const encoded = (typeof ScramjetCodec !== "undefined")
-        ? ScramjetCodec.encode(url)
-        : encodeURIComponent(url);
-      window.location.href = "/scram/" + encoded;
+      // Use ScramjetController to navigate
+      scramjet.go(url);
     }
 
     document.getElementById("fv").addEventListener("submit", (e) => {
@@ -146,3 +144,4 @@
   </script>
 </body>
 </html>
+
