@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins&display=swap">
+  <style>
+    :root {
+      --background-color: #111;
+      --background-input: #2a2a2a;
+      --text-primary: #fff;
+      --text-dark: #555;
+      --text-placeholder: #aaa;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    ::-webkit-scrollbar { width: 6px; background-color: var(--background-color); }
+    ::-webkit-scrollbar-thumb { border-radius: 10px; background-color: #444; }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .main {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .title {
+      font-size: 10vh;
+      color: var(--text-primary);
+      font-family: "Inter", sans-serif;
+      text-align: center;
+      text-transform: uppercase;
+      margin-bottom: 0.3em;
+      letter-spacing: 0.05em;
+      text-shadow: 0 0 40px rgba(100, 100, 255, 0.4), 2px 4px 6px rgba(0,0,0,0.5);
+      transition: 0.35s ease;
+      cursor: default;
+    }
+
+    .title:hover {
+      transform: translateY(-5%) scale(1.03);
+      font-weight: 800;
+    }
+
+    #splash {
+      color: var(--text-dark);
+      margin-bottom: 1.5em;
+      font-family: "Poppins", sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+    }
+
+    .search-container {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+
+    input {
+      padding: 18px 24px;
+      width: 520px;
+      max-width: 90vw;
+      border-radius: 8px;
+      background: rgba(40, 40, 60, 0.85);
+      backdrop-filter: blur(12px);
+      text-align: center;
+      font-size: 18px;
+      font-family: "Poppins", sans-serif;
+      border: 1px solid rgba(100, 100, 255, 0.2);
+      outline: none;
+      color: var(--text-primary);
+      transition: 0.4s;
+      box-shadow: 0 0 20px rgba(80, 80, 200, 0.15);
+    }
+
+    input:focus {
+      border-color: rgba(100, 100, 255, 0.6);
+      box-shadow: 0 0 30px rgba(80, 80, 200, 0.35);
+    }
+
+    ::placeholder {
+      color: var(--text-placeholder);
+    }
+
+    @media (orientation: portrait) {
+      .title { font-size: 10vw; }
+      input { width: 85vw; font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="main">
+    <h1 class="title">NEXUS</h1>
+    <p id="splash">Browse freely</p>
+    <div class="search-container">
+      <form id="fv">
+        <input id="input" class="truncate" placeholder="Search or enter a URL" type="text" autocomplete="off" />
+      </form>
+    </div>
+  </div>
+
+  <!-- Scramjet scripts served by Scramjet-App backend -->
+  <script src="/scram/scramjet.codecs.js"></script>
+  <script src="/scram/scramjet.shared.js"></script>
+  <script src="/scram/scramjet.worker.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+  <script>
+    // Register Scramjet service worker
+    window.addEventListener("load", async () => {
+      if ("serviceWorker" in navigator) {
+        try {
+          const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" });
+          console.log("SW registered:", reg.scope);
+        } catch (e) {
+          console.error("SW registration failed:", e);
+        }
+      }
+    });
+
+    // Particles background
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 60, density: { enable: true, value_area: 800 } },
+        color: { value: "#6464ff" },
+        shape: { type: "circle" },
+        opacity: { value: 0.3, random: true },
+        size: { value: 2, random: true },
+        line_linked: { enable: true, distance: 150, color: "#6464ff", opacity: 0.15, width: 1 },
+        move: { enable: true, speed: 1.5, random: true, out_mode: "out" }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" } },
+        modes: { repulse: { distance: 80 }, push: { particles_nb: 3 } }
+      }
+    });
+
+    // Scramjet URL encoding (XOR codec)
+    function encodeUrl(url) {
+      return encodeURIComponent(
+        Array.from(url).map((c, i) =>
+          String.fromCharCode(c.charCodeAt(0) ^ (i % 2 === 0 ? 2 : 3))
+        ).join("")
+      );
+    }
+
+    function isUrl(val) {
+      return /^http(s?):\/\//.test(val) || (val.includes(".") && !val.startsWith(" "));
+    }
+
+    function processUrl(value) {
+      let url = value.trim();
+      const engine = localStorage.getItem("engine") || "https://duckduckgo.com/?q=";
+      if (!isUrl(url)) {
+        url = engine + encodeURIComponent(url);
+      } else if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        url = "https://" + url;
+      }
+      window.location.href = "/scram/" + encodeUrl(url);
+    }
+
+    const form = document.getElementById("fv");
+    const input = document.getElementById("input");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      processUrl(input.value);
+    });
+  </script>
+</body>
+</html>
