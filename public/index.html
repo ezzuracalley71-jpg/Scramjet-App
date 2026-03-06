@@ -7,49 +7,32 @@
   <title>NEXUS</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --cyan: #00f5ff;
-      --magenta: #ff00aa;
-      --dark: #020408;
-      --mid: #080e18;
-    }
+    :root { --cyan: #00f5ff; --magenta: #ff00aa; --dark: #020408; --mid: #080e18; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { width: 100%; height: 100%; overflow: hidden; background: var(--dark); font-family: 'Space Mono', monospace; color: #fff; }
-    .grid-bg {
-      position: fixed; inset: 0;
-      background-image: linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
-      background-size: 60px 60px;
-      animation: gridDrift 20s linear infinite; z-index: 0;
-    }
+    .grid-bg { position: fixed; inset: 0; background-image: linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px); background-size: 60px 60px; animation: gridDrift 20s linear infinite; z-index: 0; }
     @keyframes gridDrift { 0% { transform: translateY(0); } 100% { transform: translateY(60px); } }
     .orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.18; z-index: 0; animation: orbFloat 8s ease-in-out infinite alternate; }
     .orb-1 { width: 400px; height: 400px; background: var(--cyan); top: -100px; left: -100px; }
     .orb-2 { width: 350px; height: 350px; background: var(--magenta); bottom: -80px; right: -80px; animation-delay: -4s; }
-    @keyframes orbFloat { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(20px,30px) scale(1.1); } }
+    @keyframes orbFloat { 0% { transform: translate(0,0); } 100% { transform: translate(20px,30px); } }
     .scanlines { position: fixed; inset: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px); z-index: 1; pointer-events: none; }
     .container { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100vh; padding: 20px; }
     .logo-tag { font-size: 11px; letter-spacing: 0.4em; color: var(--cyan); text-transform: uppercase; margin-bottom: 12px; opacity: 0.7; text-align: center; }
-    .logo-title {
-      font-family: 'Orbitron', sans-serif; font-size: clamp(52px, 12vw, 96px); font-weight: 900;
-      letter-spacing: 0.12em; text-transform: uppercase; line-height: 1; text-align: center;
-      background: linear-gradient(135deg, #fff 0%, var(--cyan) 50%, var(--magenta) 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      animation: titleGlow 3s ease-in-out infinite alternate; margin-bottom: 8px;
-    }
+    .logo-title { font-family: 'Orbitron', sans-serif; font-size: clamp(52px, 12vw, 96px); font-weight: 900; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1; text-align: center; background: linear-gradient(135deg, #fff 0%, var(--cyan) 50%, var(--magenta) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: titleGlow 3s ease-in-out infinite alternate; margin-bottom: 8px; }
     @keyframes titleGlow { 0% { filter: drop-shadow(0 0 20px rgba(0,245,255,0.3)); } 100% { filter: drop-shadow(0 0 40px rgba(255,0,170,0.4)); } }
     .logo-sub { font-size: 11px; letter-spacing: 0.3em; color: rgba(255,255,255,0.3); text-transform: uppercase; text-align: center; margin-bottom: 48px; }
     .search-area { width: 100%; max-width: 580px; }
     .search-wrapper { position: relative; display: flex; align-items: center; }
     .search-wrapper::before { content: ''; position: absolute; inset: -1px; border-radius: 4px; background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--cyan)); background-size: 200% 100%; animation: borderSlide 3s linear infinite; z-index: -1; }
     @keyframes borderSlide { 0% { background-position: 0% 0%; } 100% { background-position: 200% 0%; } }
-    .search-input { width: 100%; padding: 18px 56px 18px 20px; background: var(--mid); border: none; border-radius: 3px; color: #fff; font-family: 'Space Mono', monospace; font-size: 14px; letter-spacing: 0.05em; outline: none; transition: background 0.3s; }
-    .search-input:focus { background: rgba(8,14,24,0.95); }
+    .search-input { width: 100%; padding: 18px 56px 18px 20px; background: var(--mid); border: none; border-radius: 3px; color: #fff; font-family: 'Space Mono', monospace; font-size: 14px; outline: none; }
     .search-input::placeholder { color: rgba(255,255,255,0.2); font-style: italic; }
-    .search-btn { position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: var(--cyan); font-size: 18px; padding: 4px; transition: all 0.2s; display: flex; align-items: center; }
-    .search-btn:hover { color: var(--magenta); transform: scale(1.2); }
+    .search-btn { position: absolute; right: 12px; background: none; border: none; cursor: pointer; color: var(--cyan); padding: 4px; display: flex; align-items: center; }
     .status-bar { display: flex; align-items: center; gap: 16px; margin-top: 20px; font-size: 10px; letter-spacing: 0.2em; color: rgba(255,255,255,0.2); text-transform: uppercase; justify-content: center; }
     .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); animation: pulse 2s ease-in-out infinite; }
-    @keyframes pulse { 0%,100% { opacity: 1; box-shadow: 0 0 6px var(--cyan); } 50% { opacity: 0.3; box-shadow: none; } }
+    @keyframes pulse { 0%,100% { opacity: 1; box-shadow: 0 0 6px var(--cyan); } 50% { opacity: 0.3; } }
+    #debug { margin-top: 16px; font-size: 10px; color: var(--magenta); text-align: center; letter-spacing: 0.1em; min-height: 14px; }
     .corner { position: fixed; width: 40px; height: 40px; z-index: 5; opacity: 0.4; }
     .corner::before, .corner::after { content: ''; position: absolute; background: var(--cyan); }
     .corner::before { width: 100%; height: 1px; top: 0; }
@@ -58,7 +41,6 @@
     .corner.tr { top: 20px; right: 20px; transform: scaleX(-1); }
     .corner.bl { bottom: 20px; left: 20px; transform: scaleY(-1); }
     .corner.br { bottom: 20px; right: 20px; transform: scale(-1); }
-    @media (max-width: 480px) { .logo-title { font-size: 48px; } .search-input { font-size: 13px; padding: 16px 48px 16px 16px; } }
   </style>
 </head>
 <body>
@@ -66,10 +48,8 @@
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="scanlines"></div>
-  <div class="corner tl"></div>
-  <div class="corner tr"></div>
-  <div class="corner bl"></div>
-  <div class="corner br"></div>
+  <div class="corner tl"></div><div class="corner tr"></div>
+  <div class="corner bl"></div><div class="corner br"></div>
 
   <div class="container">
     <div class="logo-tag">// secure tunnel v2.0</div>
@@ -88,49 +68,68 @@
       </form>
       <div class="status-bar">
         <div class="status-dot"></div>
-        <span>connection active</span>
-        <span>//</span>
-        <span>proxy ready</span>
+        <span id="status-text">initializing...</span>
       </div>
+      <div id="debug"></div>
     </div>
   </div>
 
-  <!-- CORRECT: controller.js for the page, all.js is only for the service worker -->
-  <script src="/scram/scramjet.controller.js"></script>
-  <script src="/baremux/bare.cjs"></script>
-
   <script>
-    const { ScramjetController } = $scramjetLoadController();
-    const scramjet = new ScramjetController({
-      files: {
-        wasm: "/scram/scramjet.wasm.wasm",
-        all: "/scram/scramjet.all.js",
-        sync: "/scram/scramjet.sync.js",
-      }
-    });
-    scramjet.init();
-    navigator.serviceWorker.register("/sw.js");
-
-    const conn = new BareMux.BareMuxConnection("/baremux/worker.js");
-    conn.setTransport("/epoxy/index.mjs", [{
-      wisp: `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/wisp/`
-    }]);
-
-    function isUrl(val) {
-      return /^http(s?):\/\//.test(val) || (val.includes(".") && !val.trim().startsWith(" "));
-    }
-
-    document.getElementById("fv").addEventListener("submit", (e) => {
+    // Intercept form FIRST before anything else loads
+    document.getElementById("fv").addEventListener("submit", function(e) {
       e.preventDefault();
-      let url = document.getElementById("input").value.trim();
+      e.stopPropagation();
+
+      var url = document.getElementById("input").value.trim();
       if (!url) return;
-      if (!isUrl(url)) {
+
+      var isUrl = /^http(s?):\/\//.test(url) || (url.includes(".") && !url.startsWith(" "));
+      if (!isUrl) {
         url = "https://duckduckgo.com/?q=" + encodeURIComponent(url);
       } else if (!url.startsWith("http://") && !url.startsWith("https://")) {
         url = "https://" + url;
       }
-      location.href = scramjet.encodeUrl(url);
+
+      if (window.__scramjet) {
+        try {
+          location.href = window.__scramjet.encodeUrl(url);
+        } catch(err) {
+          document.getElementById("debug").textContent = "ERR: " + err.message;
+        }
+      } else {
+        document.getElementById("debug").textContent = "ERR: proxy not initialized - " + window.__initError;
+      }
     });
+  </script>
+
+  <script src="/scram/scramjet.controller.js" onerror="window.__initError='failed to load scramjet.controller.js'"></script>
+  <script src="/baremux/bare.cjs" onerror="window.__initError='failed to load bare.cjs'"></script>
+
+  <script>
+    try {
+      const { ScramjetController } = $scramjetLoadController();
+      const scramjet = new ScramjetController({
+        files: {
+          wasm: "/scram/scramjet.wasm.wasm",
+          all: "/scram/scramjet.all.js",
+          sync: "/scram/scramjet.sync.js",
+        }
+      });
+      scramjet.init();
+      navigator.serviceWorker.register("/sw.js");
+
+      const conn = new BareMux.BareMuxConnection("/baremux/worker.js");
+      conn.setTransport("/epoxy/index.mjs", [{
+        wisp: (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/"
+      }]);
+
+      window.__scramjet = scramjet;
+      document.getElementById("status-text").textContent = "connection active // proxy ready";
+    } catch(err) {
+      window.__initError = err.message;
+      document.getElementById("status-text").textContent = "proxy error";
+      document.getElementById("debug").textContent = "ERR: " + err.message;
+    }
   </script>
 </body>
 </html>
