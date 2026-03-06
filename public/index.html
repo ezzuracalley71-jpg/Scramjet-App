@@ -74,14 +74,11 @@
     </div>
   </div>
 
-  <!-- Correct order per official docs: BareMux → transport → scramjet.all.js -->
   <script src="/baremux/bare.cjs"></script>
-  <script src="/epoxy/index.js"></script>
   <script src="/scram/scramjet.all.js"></script>
 
   <script>
     try {
-      // Init scramjet controller
       const { ScramjetController } = $scramjetLoadController();
       const scramjet = new ScramjetController({
         files: {
@@ -93,10 +90,9 @@
       scramjet.init();
       navigator.serviceWorker.register("/sw.js");
 
-      // Init BareMux with libcurl transport (what Scramjet-App uses)
       const conn = new BareMux.BareMuxConnection("/baremux/worker.js");
       conn.setTransport("/libcurl/index.mjs", [{
-        wisp: (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/"
+        websocket: (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/"
       }]);
 
       window.__sj = scramjet;
