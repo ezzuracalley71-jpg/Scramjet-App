@@ -32,7 +32,7 @@
     .status-bar { display: flex; align-items: center; gap: 16px; margin-top: 20px; font-size: 10px; letter-spacing: 0.2em; color: rgba(255,255,255,0.2); text-transform: uppercase; justify-content: center; }
     .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); animation: pulse 2s ease-in-out infinite; }
     @keyframes pulse { 0%,100% { opacity: 1; box-shadow: 0 0 6px var(--cyan); } 50% { opacity: 0.3; } }
-    #debug { margin-top: 16px; font-size: 10px; color: var(--magenta); text-align: center; letter-spacing: 0.1em; min-height: 14px; }
+    #debug { margin-top: 12px; font-size: 10px; color: var(--magenta); text-align: center; letter-spacing: 0.05em; min-height: 14px; word-break: break-all; max-width: 580px; }
     .corner { position: fixed; width: 40px; height: 40px; z-index: 5; opacity: 0.4; }
     .corner::before, .corner::after { content: ''; position: absolute; background: var(--cyan); }
     .corner::before { width: 100%; height: 1px; top: 0; }
@@ -74,39 +74,14 @@
     </div>
   </div>
 
-  <script>
-    // Intercept form FIRST before anything else loads
-    document.getElementById("fv").addEventListener("submit", function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      var url = document.getElementById("input").value.trim();
-      if (!url) return;
-
-      var isUrl = /^http(s?):\/\//.test(url) || (url.includes(".") && !url.startsWith(" "));
-      if (!isUrl) {
-        url = "https://duckduckgo.com/?q=" + encodeURIComponent(url);
-      } else if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        url = "https://" + url;
-      }
-
-      if (window.__scramjet) {
-        try {
-          location.href = window.__scramjet.encodeUrl(url);
-        } catch(err) {
-          document.getElementById("debug").textContent = "ERR: " + err.message;
-        }
-      } else {
-        document.getElementById("debug").textContent = "ERR: proxy not initialized - " + window.__initError;
-      }
-    });
-  </script>
-
-  <script src="/scram/scramjet.controller.js" onerror="window.__initError='failed to load scramjet.controller.js'"></script>
-  <script src="/baremux/bare.cjs" onerror="window.__initError='failed to load bare.cjs'"></script>
+  <!-- Correct order per official docs: BareMux → transport → scramjet.all.js -->
+  <script src="/baremux/bare.cjs"></script>
+  <script src="/epoxy/index.js"></script>
+  <script src="/scram/scramjet.all.js"></script>
 
   <script>
     try {
+      // Init scramjet controller
       const { ScramjetController } = $scramjetLoadController();
       const scramjet = new ScramjetController({
         files: {
@@ -118,18 +93,35 @@
       scramjet.init();
       navigator.serviceWorker.register("/sw.js");
 
+      // Init BareMux with libcurl transport (what Scramjet-App uses)
       const conn = new BareMux.BareMuxConnection("/baremux/worker.js");
-      conn.setTransport("/epoxy/index.mjs", [{
+      conn.setTransport("/libcurl/index.mjs", [{
         wisp: (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/"
       }]);
 
-      window.__scramjet = scramjet;
+      window.__sj = scramjet;
       document.getElementById("status-text").textContent = "connection active // proxy ready";
-    } catch(err) {
-      window.__initError = err.message;
-      document.getElementById("status-text").textContent = "proxy error";
-      document.getElementById("debug").textContent = "ERR: " + err.message;
+    } catch(e) {
+      document.getElementById("status-text").textContent = "error";
+      document.getElementById("debug").textContent = e.message;
     }
+
+    function isUrl(val) {
+      return /^http(s?):\/\//.test(val) || (val.includes(".") && !val.trim().startsWith(" "));
+    }
+
+    document.getElementById("fv").addEventListener("submit", function(e) {
+      e.preventDefault();
+      var url = document.getElementById("input").value.trim();
+      if (!url) return;
+      if (!isUrl(url)) url = "https://duckduckgo.com/?q=" + encodeURIComponent(url);
+      else if (!url.startsWith("http://") && !url.startsWith("https://")) url = "https://" + url;
+      if (window.__sj) {
+        location.href = window.__sj.encodeUrl(url);
+      } else {
+        document.getElementById("debug").textContent = "Proxy not ready, check error above";
+      }
+    });
   </script>
 </body>
 </html>
